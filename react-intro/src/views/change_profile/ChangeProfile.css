@@ -1,0 +1,240 @@
+.change_profile_wrap {
+    background-color: #edea9f;
+    height: auto;
+}
+.nav_icon {
+    width: 45px;
+    height: 37px;
+    position: fixed;
+    top: 50px;
+    left: 1150px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    cursor: pointer;
+    user-select: none;
+}
+.nav_icon_active {
+    width: 45px;
+    height: 37px;
+    position: fixed;
+    top: 50px;
+    left: 1150px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    cursor: pointer;
+    user-select: none;
+}
+.nav_icon_active .bar_big:first-child {
+    -webkit-transform: translateY(16.5px) rotate(45deg);
+    -ms-transform: translateY(16.5px) rotate(45deg);
+    -o-transform: translateY(16.5px) rotate(45deg);
+    transform: translateY(16.5px) rotate(45deg);
+}
+.nav_icon_active .bar_big:last-child {
+    -webkit-transform: translateY(-16.5px) rotate(-45deg);
+    -ms-transform: translateY(-16.5px) rotate(-45deg);
+    -o-transform: translateY(-16.5px) rotate(-45deg);
+    transform: translateY(-16.5px) rotate(-45deg);
+}
+.nav_icon_active .bar_small1 {
+    -webkit-transform: translateY(6px) translateX(-8px) rotate(-45deg);
+    -ms-transform: translateY(6px)translateX(-8px) rotate(-45deg);
+    -o-transform: translateY(6px) translateX(-8px) rotate(-45deg);
+    transform: translateY(6px) translateX(-8px) rotate(-45deg);
+}
+.nav_icon_active .bar_small2 {
+    -webkit-transform: translateY(-5px) translateX(-7px) rotate(45deg);
+    -ms-transform: translateY(-5px) translateX(-7px) rotate(45deg);
+    -o-transform: translateY(-5px) translateX(-7px) rotate(45deg);
+    transform: translateY(-5px) translateX(-7px) rotate(45deg);
+}
+.bar_big {
+    width: 45px;
+    height: 3px;
+    background-color: #3f3f3f;
+    display: block;
+    transition: all 0.3s ease-in-out;
+}
+.bar_small1 {
+    width: 30px;
+    height: 3px;
+    background-color: #3f3f3f;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: block;
+    transition: all 0.3s ease-in-out;
+}
+.bar_small2 {
+    width: 30px;
+    height: 3px;
+    background-color: #3f3f3f;
+    margin-bottom: 8px;
+    display: block;
+    transition: all 0.3s ease-in-out;
+}
+.menu {
+    position: fixed;
+    display: flex;
+    transform: translate(101%);
+    transition: 0.5s ease-in-out;
+    flex-direction: column;
+    background-color: #FFFDC7;
+    width: 220px;
+    height: 450px;
+    margin-top: 0px;
+    top: 0px;
+    right: 0px;
+    padding-left: 30px;
+    /* border: 1px solid black; */
+}
+.menu_out {
+    transform: translate(0%)!important;
+}
+.menu_item {
+    cursor: pointer;
+    list-style: none;
+    margin: 5px 0 5px 0;
+    font-size: 17px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    transition: 0.3s;
+    border-radius: 10px;
+    padding-left: 20px;
+    &:hover {
+        background-color: #edea9f;
+    }
+}
+.menu_item:first-child {
+    margin-top: 120px;
+}
+.users_profile_wrapper1 {
+    display: inline-flex;
+}
+.change_profile_main {
+    width: 80%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+}
+.change_profile_label {
+    margin-top: 25px;
+    &:first-child {
+        margin-top: 0px;
+    }
+    font-size: 25px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+.change_profile_main_block {
+    display: flex;
+    flex-direction: column;
+    margin-left: 200px;
+    margin-top: 30px;
+    &:first-child {
+        margin-left: 30px;
+    }
+}
+.change_profile_input {
+    outline: none;
+    border: 1px rgb(194, 185, 64) solid;
+    border-radius: 10px;
+    width: 250px;
+    height: 34px;
+    background-color: #c8ba5f;
+    transition: 0.3s;
+    &:focus {
+        background-color: rgb(240, 237, 206);
+    }
+    padding-left: 7px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+.save_profile_btn {
+    width: 200px;
+    height: 35px;
+    margin-left: 40px;
+    margin-top: 20px;
+    font-size: 18px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    outline: none;
+    border: 0px;
+    border-radius: 8px;
+    background-color: rgb(197, 239, 100);
+    cursor: pointer;
+    transition: 0.3s;
+    &:hover {
+        background-color: rgb(169, 205, 84);
+    }
+}
+#form-file-upload {
+  height: 120px;
+  width: 280px;
+  max-width: 100%;
+  text-align: center;
+  position: relative;
+  margin-top: 20px;
+}
+
+#input-file-upload {
+  display: none;
+}
+
+#label-file-upload {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-width: 2px;
+  border-radius: 1rem;
+  border-style: dashed;
+  border-color: #e8ad48;
+  background-color: #c8ba5f;
+  font-size: 17px;
+  transition: 0.3s;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  &:hover {
+    background-color: #aa9d4a;
+  }
+}
+
+#label-file-upload.drag-active {
+  background-color: #ffffff;
+}
+
+#drag-file-element {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+}
+#wrong_file_type.closed {
+    margin-top: 15px;
+    font-size: 16px;
+    transform: translateY(-101%);
+    transition: all 0.4s ease-in-out;
+    visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+#wrong_file_type.opened {
+    margin-top: 15px;
+    font-size: 16px;
+    transform: translateY(0%);
+    transition: all 0.4s ease-in-out;
+    visibility: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}

@@ -31,6 +31,14 @@ class RegForm extends React.Component {
             req3: false,
             reg_status: 0,
             box: false,
+            login_unique: false,
+            email_unique: false
+        }
+        this.config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': '123qwe'
+            }
         }
     }
 
@@ -42,15 +50,7 @@ class RegForm extends React.Component {
                     'authorization': '123qwe'
                 }
             }
-            var resp;
-            const data = {email: this.props.u_email, login: this.props.u_login};
-            axios.post( "http://localhost:3010/api/check_existance", data, config).then(response => resp = response).catch(function (error) {
-                if (error.response) {
-                    alert("Ошибка " + String(error.response.status));
-                }
-              });
-
-            if (this.state.email != "" && this.state.login != "" && this.state.req1 && this.state.req2 && this.state.req3 && this.state.password1 == this.state.password2 && this.state.box) {
+            if (this.state.email != "" && this.state.login != "" && this.state.req1 && this.state.req2 && this.state.req3 && this.state.password1 == this.state.password2 && this.state.box && this.state.login_unique && this.state.email_unique) {
                 this.state.reg_status = 1;
                 this.props.confFunc({"name": this.state.name, "last_name": this.state.last_name, "login": this.state.login, "nickname": this.state.nickname, "email": this.state.email, "phone": this.state.phone, "password": this.state.password1})
             } else if (this.state.email == "" || this.state.login == "" || this.state.password1 == "" || this.state.password2 == ""){
@@ -61,13 +61,10 @@ class RegForm extends React.Component {
                 alert("Пароли не совпадают");
             } else if (!this.state.box) {
                 alert("Вы не согласились с правилами");
-            }
-
-            if (resp && resp.data["status"] == 1) {
-                alert("Пользователь с такой почтой уже есть")
-            }
-            if (resp && resp.data["status"] == 2) {
-                alert("Пользователь с таким логином уже есть")
+            } else if (!this.state.login_unique) {
+                alert("Такой логин уже есть");
+            } else if (!this.state.email_unique) {
+                alert("Такая почта уже есть");
             }
         }
     }
@@ -99,6 +96,7 @@ class RegForm extends React.Component {
 
     onTextChange = event => {
         let tmp
+        let data
         switch (event.target.id ){
             case "input_name": 
                 this.setState({name: event.target.value});
@@ -112,7 +110,30 @@ class RegForm extends React.Component {
                 tmp.last_name = event.target.value;
                 this.props.changeFunc(tmp);
                 break;
-            case "input_login": 
+            case "input_login":
+                data = {login: event.target.value}
+                axios.post( "http://localhost:3010/api/check_existance", data, this.config).then(response => {
+                    if (Object.keys(response).length != 0 && response.data["status"] != 0) {
+                        if (event.target.value != "") {
+                            event.target.style.backgroundColor = "#FC8E86";
+                            this.setState({login_unique: false});
+                        } else {
+                            event.target.style.backgroundColor = "#ffffff";
+                        }
+                    } else if (Object.keys(response).length != 0 && response.data["status"] == 0) {
+                        if (event.target.value != "") {
+                            event.target.style.backgroundColor = "#6CECC7";
+                            this.setState({login_unique: true});
+                        } else {
+                            event.target.style.backgroundColor = "#ffffff";
+                        }
+                    }
+                    console.log(this.state);
+                }).catch(function (error) {
+                    if (error.response) {
+                        alert("Ошибка " + String(error.response.status));
+                    }
+                });
                 this.setState({login: event.target.value});
                 tmp = this.state;
                 tmp.login = event.target.value;
@@ -125,6 +146,29 @@ class RegForm extends React.Component {
                 this.props.changeFunc(tmp);
                 break;
             case "input_mail": 
+            data = {email: event.target.value}
+            axios.post( "http://localhost:3010/api/check_existance", data, this.config).then(response => {
+                    if (Object.keys(response).length != 0 && response.data["status"] != 0) {
+                        if (event.target.value != "") {
+                            event.target.style.backgroundColor = "#FC8E86";
+                            this.setState({email_unique: false});
+                        } else {
+                            event.target.style.backgroundColor = "#ffffff";
+                        }
+                    } else if (Object.keys(response).length != 0 && response.data["status"] == 0) {
+                        if (event.target.value != "") {
+                            event.target.style.backgroundColor = "#6CECC7";
+                            this.setState({email_unique: true});
+                        } else {
+                            event.target.style.backgroundColor = "#ffffff";
+                        }
+                    }
+                    console.log(this.state);
+                }).catch(function (error) {
+                    if (error.response) {
+                        alert("Ошибка " + String(error.response.status));
+                    }
+                });
                 this.setState({email: event.target.value});
                 tmp = this.state;
                 tmp.email = event.target.value;
@@ -136,22 +180,22 @@ class RegForm extends React.Component {
                 tmp.phone = event.target.value;
                 this.props.changeFunc(tmp);
                 break;
-            case "input_pass1": 
+            case "input_pass1":
                 this.setState({password1: event.target.value});
                 tmp = this.state;
                 tmp.password1 = event.target.value;
                 this.props.changeFunc(tmp);
                 var status = this.checkPassword(event.target.value);
                 if ((!status.len) || (!status.bigIn) || (!status.numIn)) {
-                    event.target.style.backgroundColor = "#fc8e86";
+                    event.target.style.backgroundColor = "#FC8E86";
                 } else {
                     event.target.style.backgroundColor = "#6CECC7";
                 }
                 let pass2 = ReactDOM.findDOMNode(document.getElementById("input_pass2"));
                 if (pass2.value != event.target.value) {
-                    pass2.style.backgroundColor = "#fc8e86";
+                    pass2.style.backgroundColor = "#FC8E86";
                 } else {
-                    pass2.style.backgroundColor = "#6CECC7";
+                    pass2.style.backgroundColor = "#FC8E86";
                 }
                 break;
             case "input_pass2":
@@ -273,24 +317,20 @@ class MailConfirmation extends React.Component {
                 }
             }
             var data = {first_name: this.props.u_first_name, last_name: this.props.u_last_name, email: this.props.u_email, nickname: this.props.u_nickname, login: this.props.u_login, password: this.props.u_password};
-            axios.post( "http://localhost:3010/api/registration", data, config).then(response => console.log(response)).catch(function (error) {
+            axios.post( "http://localhost:3010/api/registration", data, config).then(response => {
+                if (Object.keys(response).length == 0 || Object.keys(response.data).length == 0 || response.data["status"] == 1) {
+                    alert("Ошибка")
+                } else {
+                    cookies.set("jwt", response.data["token"], { path: "/", sameSite: "strict" });
+                    cookies.set("uid", response.data["uid"], { path: "/", sameSite: "strict" });
+                    console.log(this.props);
+                    this.props.navigate("/my_profile", { replace: true });
+                }
+                }).catch(function (error) {
                 if (error.response) {
                     alert("Ошибка " + String(error.response.status));
                 }
             });
-
-            var resp;
-            data = {public_key: this.props.u_email, private_key: this.props.u_password};
-            axios.post( "http://localhost:3010/api/login", data, config).then(response => resp = response).catch(function (error) {
-                    if (error.response) {
-                        alert("Ошибка " + String(error.response.status));
-                    }
-                });
-            if (resp && resp.data["status"] == 1) {
-                alert("Неверный логин или адрес почты")
-            } else if (resp && resp.data["token"]) {
-                cookies.set("jwt", resp.data["token"], { path: "/" })
-            }
         }
     }
 
@@ -340,10 +380,11 @@ class MailConfirmation extends React.Component {
 }
 
 class Registration extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.data1 = React.createRef();
         this.data2 = React.createRef();
+        this.navigate = this.props.navigate;
         this.confirmation = this.confirmation.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.state = {
@@ -399,7 +440,7 @@ class Registration extends React.Component {
                 <Header isMain={false} />
                 <div className="reg_wrap">
                     <RegForm changeFunc={this.onInputChange} confFunc={this.confirmation} style={{display: this.state.reg_display}}/>
-                    <MailConfirmation id="mailconf" style={{height: "400px", display: this.state.conf_display}} u_name={this.state.name} u_last_name={this.state.last_name} u_login={this.state.login} u_nickname={this.state.nickname} u_email={this.state.email} u_phone={this.state.phone} u_password={this.state.password} u_conf_answer={this.state.conf_answer} />
+                    <MailConfirmation id="mailconf" style={{height: "400px", display: this.state.conf_display}} navigate={this.navigate} u_name={this.state.name} u_last_name={this.state.last_name} u_login={this.state.login} u_nickname={this.state.nickname} u_email={this.state.email} u_phone={this.state.phone} u_password={this.state.password} u_conf_answer={this.state.conf_answer} />
                 </div>
                 <Footer style={{background: "#FFFDC7", height: "380px"}}/>
             </div>

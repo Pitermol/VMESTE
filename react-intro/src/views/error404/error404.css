@@ -1,0 +1,45 @@
+.error404_wrap {
+    background: url("../../static/error404_back.png");
+    background-size: cover;
+    height: 715px;
+}
+.error404_wrap button {
+    position: absolute;
+    background-color: #EBCE6BCC;
+    width: 400px;
+    height: 80px;
+    border-radius: 70px;
+    top: 490px;
+    left: 540px;
+    font-size: 50px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0);
+    padding-bottom: 10px;
+    padding-right: 8px;
+    -webkit-text-stroke: 2px #264E2B;
+    border: none;
+    &:hover {
+        cursor: pointer;
+    }
+}
+.h1 {
+    position: absolute;
+    top: 180px;
+    left: 475px;
+    color: white;
+    font-size: 120px;
+    font-weight: 600;
+    user-select: none;
+    color: white;
+    -webkit-text-stroke: 0px;
+}
+.h2 {
+    position: absolute;
+    top: 250px;
+    left: 580px;
+    color: rgba(0, 0, 0, 0);
+    -webkit-text-stroke: 2px white;
+    font-size: 90px;
+    font-weight: 600;
+    user-select: none;
+}

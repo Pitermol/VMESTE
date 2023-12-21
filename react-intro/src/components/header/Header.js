@@ -3,6 +3,7 @@ import Logo from '../common/Logo/Logo';
 import "./Header.css";
 import ScrollToButton from "../common/ScrollToButton.js";
 import { Link } from "react-router-dom";
+import back from "../../static/header_back.png";
 
 function NavBar() {
     return (

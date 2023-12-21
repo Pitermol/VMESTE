@@ -7,7 +7,7 @@ import logo_gosuslugi from "../../static/logo_gosuslugi.png";
 import logo_mailru from "../../static/logo_mail_ru.svg";
 import logo_yandex from "../../static/logo_yandex.png";
 import checkmark from "../../static/checkmark.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import './pretty-checkbox.min.css';
@@ -20,31 +20,41 @@ class LoginForm extends React.Component {
         super(props);
         this.handleClick = this.handleClick.bind(this);
         this.onTextChange = this.onTextChange.bind(this);
+        this.navigate = this.props.navigate;
         this.state = {
             login: "",
             password: ""
         }
     }
 
-    handleClick(e) {
-        var resp;
+    handleClick = event => {
         const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'authorization': '123qwe'
             }
         }
+        var nav = this.props.navigate;
         const data = {public_key: this.state.login, private_key: this.state.password};
-        axios.post( "http://localhost:3010/api/login", data, config).then(response => resp = response).catch(function (error) {
+        axios.post( "http://localhost:3010/api/login", data, config).then(function(response) {
+            if (Object.keys(response).length != 0 && Object.keys(response.data).length != 0 && response.data["status"] == 1) {
+                alert("Неверный логин или адрес почты")
+            } else if ((Object.keys(response).length != 0 && Object.keys(response.data).length != 0 && response.data["status"] == 2)) {
+                alert("Неверный пароль")
+            } else if (Object.keys(response).length != 0 && Object.keys(response.data).length != 0 && Object.keys(response.data).includes("token")) {
+                // console.log(nav);
+                cookies.set("jwt", response.data["token"], { path: "/", sameSite: "strict" });
+                cookies.set("uid", response.data["uid"], { path: "/", sameSite: "strict" });
+                nav("/my_profile", { replace: true });
+            } else {
+                alert("Ошибка сервера");
+            }
+        }).catch(function (error) {
                 if (error.response) {
                     alert("Ошибка " + String(error.response.status));
                 }
             });
-        if (resp && resp.data["status"] == 1) {
-            alert("Неверный логин или адрес почты")
-        } else if (resp && resp.data["token"]) {
-            cookies.set("jwt", resp.data["token"], { path: "/" })
-        }
+        
     }
 
     onTextChange = event => {
@@ -68,7 +78,7 @@ class LoginForm extends React.Component {
                 <div className="log_main">
                     <div className="log_inputs">
                         <input type="text" placeholder="Логин / почта" className="log_login_input" onChange={this.onTextChange}></input>
-                        <input type="text" placeholder="Пароль" className="log_password_input" onChange={this.onTextChange}></input>
+                        <input type="password" placeholder="Пароль" className="log_password_input" onChange={this.onTextChange}></input>
                     </div>
                     <div className="log_proceed">
                         <div style={{display: "block", marginLeft: "21px"}}>
@@ -108,7 +118,7 @@ class LoginForm extends React.Component {
     }
 }
 
-class Login extends React.Component {
+class LoginClass extends React.Component {
     constructor() {
         super();
         this.data1 = React.createRef();
@@ -144,9 +154,13 @@ class Login extends React.Component {
     render() {
         return (
             <div className="log_wrap">
-                <LoginForm changeFunc={this.onInputChange} style={{display: this.state.reg_display}}/>
+                <LoginForm changeFunc={this.onInputChange} navigate={this.props.navigate} style={{display: this.state.reg_display}}/>
             </div>
         )
     }
 }
-export default Login;
+
+export default function Login() {
+    let navigate = useNavigate();
+    return <LoginClass navigate={navigate} />
+}

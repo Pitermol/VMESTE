@@ -28,9 +28,36 @@ import routes from "../../static/routes.png";
 import reviews from "../../static/reviews.png";
 import subs from "../../static/subs.png";
 import helps from "../../static/helps.png";
+import Cookies from 'universal-cookie';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+const cookies = new Cookies();
+
 
 function MainNotLoggedIn(props) {
-  return (
+  var navigate = useNavigate();
+  if ("jwt" in cookies.getAll()) {
+  var jwt = cookies.get("jwt");
+    var config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': `Bearer ${jwt}`
+      }
+    }
+    axios.get( "http://localhost:3010/api/checkjwt", config ).then(function(response) {
+      if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
+        if (response.data["status"] == 0) {
+        navigate("/feed", { replace: true });
+        }
+      }
+    }).catch(function (error) {
+      if (error.response) {
+        alert("Ошибка " + String(error.response.status));
+      }
+    });
+  }
+    return (
     <div>
       <Header isMain={true} />
       <section id="tab-1">
@@ -45,7 +72,7 @@ function MainNotLoggedIn(props) {
               <h className='share'>
                 Поделись своим опытом, открой для себя новые направления и свяжись с глобальным сообществом путешественников!
               </h>
-              <button>Зарегистрироваться</button>
+              <button style={{display: "flex", justifyContent: "center", alignItems: "center", paddingBottom: "10px", cursor: "pointer"}}>Зарегистрироваться</button>
             </div>
             <img src={main_page} width="620px" height="680px" />
         </div>

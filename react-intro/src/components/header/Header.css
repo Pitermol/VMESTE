@@ -6,8 +6,8 @@ header {
 #header-div {
     display: flex;
     height: 100%;
-    width: 100%; 
-    background-color: #FFFDC7;
+    width: 100%;
+    background: url("../../static/header_back.png");
     position: relative;
 }
 a {
@@ -23,7 +23,7 @@ a {
     margin-top: 32.5px;
     margin-left: 4.5%;
     /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); */
-    background: #FFFDC7;
+    /* background: #FFFDC7; */
     z-index: 10;
     &--top {
         position: fixed;
