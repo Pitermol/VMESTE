@@ -160,7 +160,7 @@
 .users_profile_info_block {
     background-color: #E0E786;
     width: 180px;
-    height: 220px;
+    height: 200px;
     margin-top: 20px;
     border-radius: 10px;
     display: flex;
@@ -311,6 +311,21 @@
         padding-top: 40px;
     }
 }
-.users_posts_table {
-    margin-top: 55px;
+#users_posts_table {
+    position: relative;
+    margin-top: 40px;
+    width: 100%;
+    padding-bottom: 40px;
+}
+/* #user_maps_block {
+    margin-left: 20%;
+} */
+.user_maps_block_three {
+    padding-left: 5%;
+}
+.user_maps_block_two {
+    padding-left: 20%;
+}
+.user_maps_block_one {
+    padding-left: 35%;
 }

@@ -10,6 +10,8 @@ import places_visited from "../../static/places_visited_img.svg";
 import top_place from "../../static/top_place_img.jpg";
 import Footer from "../../components/footer/Footer.js";
 import checkmark from "../../static/checkmark.png";
+import { scrollTo } from "../../scrollTo";
+import { Map, YMaps, Placemark } from '@pbe/react-yandex-maps';
 
 const cookies = new Cookies();
 
@@ -26,7 +28,10 @@ class UsersProfileClass extends React.Component {
             subs_amount: 0,
             posts_amount: 0,
             top_place: 0,
-            if_subscribed: false
+            if_subscribed: false,
+            avatar_width: 0,
+            avatar_height: 0,
+            posts: []
         }
         var config;
         if ("jwt" in cookies.getAll()) {
@@ -42,7 +47,7 @@ class UsersProfileClass extends React.Component {
                     if (response.data["status"] == 1) {
                         navigate("/login", { replace: true });
                     } else {
-                        console.log(response.data.data.data.uid);
+                        // console.log(response.data.data.data.uid);
                         this.setState({uid: response.data.data.data.uid});
                     }
                 }
@@ -62,12 +67,31 @@ class UsersProfileClass extends React.Component {
                 'uid': parseInt(window.location.pathname.split("/")[2])
             }
         }
+        // console.log(this.state.avatar);
+        if (this.state.avatar == undefined) {
+            axios.get(`http://localhost:3010/api/get_avatar`, {
+                headers: {
+                uid: window.location.pathname.split("/")[2],
+                },
+                responseType: 'blob',
+            })
+            .then((response) => {
+                const blob = new Blob([response.data]);
+                // console.log(blob);
+                this.changeAvatar(blob);
+            })
+            .catch((error) => {
+                console.error('Ошибка загрузки файла:', error);
+            });
+        }
+        
+
         axios.get("http://localhost:3010/api/get_public_info", config).then(response => {
             if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
                 if (response.data["status"] == 1) {
                     alert("Ошибка на стороне сервера");
                 } else {
-                    this.setState({ login: response.data.login, nickname: response.data.nickname, avatar: response.data.avatar, subs_amount: response.data.subs, posts_amount: response.data.posts, top_place: response.data.place });
+                    this.setState({ login: response.data.login, nickname: response.data.nickname, subs_amount: response.data.subs, posts_amount: response.data.posts, top_place: response.data.place });
                 }
             }
         }).catch(function (error) {
@@ -90,17 +114,55 @@ class UsersProfileClass extends React.Component {
                 this.setState({if_subscribed: false})
             }
         }).catch(function (error) {
-                if (error.response) {
-                    alert("Ошибка " + String(error.response.status));
-                }
-            });
+            if (error.response) {
+                alert("Ошибка " + String(error.response.status));
+            }
+        });
         
+
+        axios.get("http://localhost:3010/api/get_users_posts", {headers: {authorization: "123qwe", uid: parseInt(window.location.pathname.split("/")[2])}}).then(response => {
+
+            var posts = [];
+            var row = [];
+            for (var i = 0; i < response.data["data"].length; i++) {
+                if ((i + 1) % 3 != 0) {
+                    row.push(response.data["data"][i])
+                } else {
+                    row.push(response.data["data"][i])
+                    posts.push(row);
+                    row = [];
+                }
+            };
+            if (row.length != 0) {
+                posts.push(row);
+            }
+            console.log(posts);
+            this.setState({ posts: posts });
+        }).catch(function (error) {
+            if (error.response) {
+                alert("Ошибка " + String(error.response.status));
+            }
+        });
         
         this.subscribe = this.subscribe.bind(this);
-        // this.onTextChange = this.onTextChange.bind(this);
+        this.changeAvatar = this.changeAvatar.bind(this);
+        this.onNavClick = this.onNavClick.bind(this);
+        this.wait = this.wait.bind(this);
+
+    }
+
+    changeAvatar = (file) => {
+        var file_url = window.URL.createObjectURL(file);
+        this.setState({ avatar: file_url });
+        const img = new Image();
+        img.src = file_url;
+        img.onload = () => {
+            this.setState({ avatar_width: img.width, avatar_height: img.height })
+        }
     }
 
     onNavClick(e) {
+        console.log(this.state.posts);
         if (e.target.className == "nav_icon") {
             e.target.className = "nav_icon_active";
             var elem = ReactDOM.findDOMNode(document.getElementsByClassName("menu")[0]);
@@ -157,19 +219,25 @@ class UsersProfileClass extends React.Component {
         }
     }
 
+    wait = () => {
+        const timer = setTimeout(() => {}, 2000);
+        return () => clearTimeout(timer)
+    }
+
     render() {
         return (
             <div className="foreign_profie_wrap">
                 <Header isMain={false} />
                 <ul className="menu">
                     <li className="menu_item">
-                        Главная
+                        <Link to="/my_profile" style={{height: "40px", width: "200px", display: "flex", alignItems: "center", color: "black"}}>
+                            Мой профиль
+                        </Link>
                     </li>
                     <li className="menu_item">
-                        Сообщения
-                    </li>
-                    <li className="menu_item">
-                        Настройки
+                        <Link to="/feed" style={{height: "40px", width: "200px", display: "flex", alignItems: "center", color: "black"}}>
+                            Главная
+                        </Link>
                     </li>
                 </ul>
                 
@@ -184,20 +252,33 @@ class UsersProfileClass extends React.Component {
                         <h>
                             Последнее путешествие
                         </h>
-                        <div style={{width: "350px", height: "300px", backgroundColor: "black", marginTop: "30px"}}></div>
-                        <button className="last_post_btn">
+                        {/* <div class="user_maps_block_one">
+                                                    <YMaps>
+                                                        <Map height={330} width={370} defaultState={{ center: [this.stateposts[-1][-1]["location"].x, this.stateposts[-1][-1]["location"].y], zoom: 4 }} >
+                                                            <Placemark
+                                                                geometry={[this.state.posts[-1][-1]["location"].x, this.state.posts[-1][-1]["location"].y]}
+                                                                options={{
+                                                                    zIndex: 100
+                                                                }}
+                                                            />
+                                                        </Map>
+                                                    </YMaps>
+                            </div> */}
+                        <div style={{width: "350px", height: "300px", backgroundColor: "white", marginTop: "30px"}}></div>
+                        {/* <button className="last_post_btn">
                             Подробнее
-                        </button>
+                        </button> */}
                     </div>
                     <div className="users_profile_info">
                         <div className="users_profile_info_1">
-                            {/* <img></img> */}
-                            <div style={{width: "180px", height: "180px", backgroundColor: "black"}}></div>
+                            <div style={{width: "180px", height: "200px", display: "block", alignItems: "center"}}>
+                                <img src={this.state.avatar} style={{display: "block", verticalAlign: "top", maxWidth: "100%", maxHeight: "100%"}} width={this.state.avatar_width > this.state.avatar_height ? "100%" : "auto"} height={this.state.avatar_width <= this.state.avatar_height ? "100%" : "auto"} />
+                            </div>
                             <div className="users_profile_info_block">
                                 <div className="users_profile_info_block_top">
-                                    <h id="users_profile_name">{(this.state.nickname === null) ? this.state.login : this.state.nickname}</h>
+                                    <h id="users_profile_name">{(this.state.nickname == "") ? this.state.login : this.state.nickname}</h>
                                 </div>
-                                <div className="users_profile_info_block_part">
+                                <div className="users_profile_info_block_part" style={{marginTop: "0px"}}>
                                     <img src={subs} width="30px"/>
                                     <h id="users_profile_subs">{this.state.subs_amount}</h>
                                 </div>
@@ -216,12 +297,13 @@ class UsersProfileClass extends React.Component {
                                 {!this.state.if_subscribed && <h>Подписаться</h>}
                                 {this.state.if_subscribed && <div><img src={checkmark} width="30px"></img><h style={{marginLeft: "5px"}}>Вы подписаны</h></div>}
                             </button>
-                            <button className="msg_to_this_user">
+                            {/* <button className="msg_to_this_user">
                                 Написать сообщение
-                            </button>
-                            <button className="check_users_posts">
+                            </button> */}
+                            <button onClick={() => {scrollTo({id: "all_posts"})}} className="check_users_posts">
                                 Посмотреть посты
                             </button>
+                            
                             <div className="users_profile_achs_block">
                                 <div className="users_profile_achs_block_top">
                                     <h style={{fontSize: "22px", fontWeight: "600", color: "#FFFDC7"}}>Особые награды</h>
@@ -241,19 +323,43 @@ class UsersProfileClass extends React.Component {
                             </div>
                         </div>
                         <div className="users_profile_gallery_block">
-                            <h>Галерея</h>
+                            {/* <h>Галерея</h>
                             {/* <img></img> */}
-                            <div style={{width: "140px", height: "180px", backgroundColor: "black", marginTop: "22.8px"}}></div>
+                            {/* <div style={{width: "140px", height: "180px", backgroundColor: "black", marginTop: "22.8px"}}></div> */}
                             {/* <img></img> */}
-                            <div style={{width: "140px", height: "180px", backgroundColor: "black", marginTop: "20px"}}></div>
+                            {/* <div style={{width: "140px", height: "180px", backgroundColor: "black", marginTop: "20px"}}></div> */}
                         </div>
                     </div>
                 </div>
-                <div className="users_profile_posts">
-                        <h>Все места meister:</h>
-                        <table className="users_posts_table">
-                            
-                        </table>
+                <div id="all_posts" className="users_profile_posts">
+                    <h>Все места {(this.state.nickname == "") ? this.state.login : this.state.nickname}:</h>
+                    <table id="users_posts_table">
+                        <tbody>
+                            {this.state.posts.map((row, i) => (
+                                <tr className="posts_row">
+                                    {row.map((col, j) => {
+                                        this.wait();
+                                        return (
+                                            <td className="posts_col">
+                                                <div class={row.length === 3 ? "user_maps_block_three" : row.length === 2 ? "user_maps_block_two" : "user_maps_block_one"}>
+                                                    <YMaps>
+                                                        <Map height={330} width={370} defaultState={{ center: [col["location"].x, col["location"].y], zoom: 4 }} >
+                                                            <Placemark
+                                                                geometry={[col["location"].x, col["location"].y]}
+                                                                options={{
+                                                                    zIndex: 100
+                                                                }}
+                                                            />
+                                                        </Map>
+                                                    </YMaps>
+                                                </div>
+                                            </td>
+                                        )}
+                                    )}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
                 <Footer style={{backgroundColor: "#FFFDC7", marginTop: "30px"}} />
             </div>

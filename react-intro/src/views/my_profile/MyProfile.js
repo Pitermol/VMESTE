@@ -30,19 +30,24 @@ class UsersProfileClass extends React.Component {
             avatar: undefined,
             subs_amount: 0,
             posts_amount: 0,
-            top_place: 0
+            top_place: 0,
+            avatar_src: undefined,
+            avatar_width: 0,
+            avatar_height: 0
         }
         var config;
 
         if ("jwt" in cookies.getAll()) {
             var jwt = cookies.get("jwt");
+            console.log(jwt);
             config = {
                 headers: {
                     'Content-Type': 'application/json',
                     'authorization': `Bearer ${jwt}`
                 }
             }
-            axios.get( "http://localhost:3010/api/checkjwt", config ).then(function(response) {
+            axios.get( "http://localhost:3010/api/checkjwt", config ).then(response => {
+                console.log(response);
                 if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
                     if (response.data["status"] == 1) {
                         navigate("/login", { replace: true });
@@ -71,7 +76,7 @@ class UsersProfileClass extends React.Component {
                 if (response.data["status"] == 1) {
                     alert("Ошибка на стороне сервера");
                 } else {
-                    this.setState({ login: response.data.login, nickname: response.data.nickname, avatar: response.data.avatar, subs_amount: response.data.subs, posts_amount: response.data.posts, top_place: response.data.place });
+                    this.setState({ login: response.data.login, nickname: response.data.nickname, subs_amount: response.data.subs, posts_amount: response.data.posts, top_place: response.data.place });
                 }
             }
         }).catch(function (error) {
@@ -79,9 +84,35 @@ class UsersProfileClass extends React.Component {
                 alert("Ошибка " + String(error.response.status));
             }
         });
+        if (this.state.avatar == undefined) {
+            axios.get(`http://localhost:3010/api/get_avatar`, {
+                headers: {
+                uid: cookies.get("uid"),
+                },
+                responseType: 'blob',
+            })
+            .then((response) => {
+                const blob = new Blob([response.data]);
+                this.changeAvatar(blob);
+            })
+            .catch((error) => {
+                console.error('Ошибка загрузки файла:', error);
+            });
+        }
         
         this.logout = this.logout.bind(this);
         this.create_post = this.create_post.bind(this);
+        this.changeAvatar = this.changeAvatar.bind(this);
+    }
+
+    changeAvatar = (file) => {
+        var file_url = window.URL.createObjectURL(file);
+        this.setState({ avatar_src: file_url });
+        const img = new Image();
+        img.src = file_url;
+        img.onload = () => {
+            this.setState({ avatar_width: img.width, avatar_height: img.height })
+        }
     }
 
     open_creating(e) {
@@ -105,7 +136,7 @@ class UsersProfileClass extends React.Component {
         }
     }
     logout(e) {
-        cookies.remove("jwt");
+        cookies.set("jwt", "", { path: "/", sameSite: "strict" });
         this.props.navigate("/login", { replace: true });
     }
     create_post(e) {
@@ -142,12 +173,15 @@ class UsersProfileClass extends React.Component {
                 <div className="my_profile_wrapper1">
                     <div className="my_profile_info" style={{zIndex: 1}}>
                         <div style={{display: "inline-flex"}}>
-                            <div className="my_profile_info_1">
+                            <div className="my_profile_info_1" style={{marginLeft: "70px"}}>
+                                <div style={{width: "180px", height: "200px", marginLeft: "20px", display: "block", alignItems: "center"}}>
+                                    <img src={this.state.avatar_src} style={{display: "block", verticalAlign: "top", maxWidth: "100%", maxHeight: "100%"}} width={this.state.avatar_width > this.state.avatar_height ? "100%" : "auto"} height={this.state.avatar_width <= this.state.avatar_height ? "100%" : "auto"} />
+                                </div>
                                 {/* <img></img> */}
-                                <div style={{width: "220px", height: "250px", backgroundColor: "black"}}></div>
+                                {/* <div style={{width: "220px", height: "250px", backgroundColor: "black"}}></div> */}
                                 <div className="my_profile_info_block">
                                     <div className="my_profile_info_block_top">
-                                        <h id="my_profile_name">{(this.state.nickname === null) ? this.state.login : this.state.nickname}</h>
+                                        <h id="my_profile_name">{(this.state.nickname == "") ? this.state.login : this.state.nickname}</h>
                                     </div>
                                     <div className="my_profile_info_block_part">
                                         <img src={subs} width="30px"/>
@@ -163,13 +197,11 @@ class UsersProfileClass extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                            <div className="my_profile_gallery_block">
+                            {/* <div className="my_profile_gallery_block">
                                 <h>Галерея</h>
-                                {/* <img></img> */}
                                 <div style={{width: "140px", height: "180px", backgroundColor: "black", marginTop: "40px"}}></div>
-                                {/* <img></img> */}
                                 <div style={{width: "140px", height: "180px", backgroundColor: "black", marginTop: "20px"}}></div>
-                            </div>
+                            </div> */}
                         </div>
                         <Link to="/change_profile">
                             <button className="change_profile_btn">Изменить профиль</button>
@@ -180,22 +212,22 @@ class UsersProfileClass extends React.Component {
                             Последнее путешествие
                         </h>
                         <div style={{width: "350px", height: "300px", backgroundColor: "black", marginTop: "30px"}}></div>
-                        <button className="last_post_btn">
+                        {/* <button className="last_post_btn">
                             Подробнее
-                        </button>
+                        </button> */}
                         <button className="create_post_btn" onClick={this.open_creating}>
                             Создать пост
                         </button>
                     </div>
                     <div className="profile_menu">
-                        <button className="profile_menu_btn">Сообщения</button>
+                        {/* <button className="profile_menu_btn">Сообщения</button>
                         <button className="profile_menu_btn">Уведомления</button>
                         <button className="profile_menu_btn">Подписчики</button>
                         <button className="profile_menu_btn">Подписки</button>
-                        <button className="profile_menu_btn">Рейтинг</button>
+                        <button className="profile_menu_btn">Рейтинг</button> */}
                         <button className="profile_menu_btn" style={{backgroundColor: "#60D9FF"}} onClick={() => document.location.replace("https://aviasales.ru")}>Купить билеты</button>
-                        <button className="profile_menu_btn">Мои награды</button>
-                        <button className="profile_menu_btn">Настройки</button>
+                        {/* <button className="profile_menu_btn">Мои награды</button>
+                        <button className="profile_menu_btn">Настройки</button> */}
                         <button className="profile_menu_btn" onClick={this.logout}>Выйти из аккаунта</button>
                     </div>
                 </div>

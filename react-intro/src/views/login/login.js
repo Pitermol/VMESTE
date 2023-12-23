@@ -92,7 +92,7 @@ class LoginForm extends React.Component {
                         </div>
                         <hr style={{direction: "vertical", border: " 1px solid black", marginTop: "0px"}}/>
                         <div style={{display: "block", marginLeft: "3px", width: "50%"}}>
-                                <div style={{userSelect: "none"}}>
+                                {/* <div style={{userSelect: "none"}}>
                                     <h style={{color: "white", fontSize: "15px"}}>
                                         Войти с помощью
                                     </h>
@@ -102,7 +102,7 @@ class LoginForm extends React.Component {
                                 <img style={{marginLeft: "10px", userSelect: "none"}} src={logo_gosuslugi} height="30px"></img>
                                 <img style={{marginLeft: "10px", userSelect: "none", filter: "invert(100%)"}} src={logo_mailru} height="30px"></img>
                                 <img style={{marginLeft: "10px", userSelect: "none"}} src={logo_yandex} height="30px"></img>
-                            </div>
+                            </div> */}
                             <Link to="/registration">
                                 <div style={{marginTop: "5px", cursor: "pointer", userSelect: "none"}}>
                                     <h className="noacc">

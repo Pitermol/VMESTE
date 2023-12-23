@@ -5,7 +5,7 @@ import "./Registration.css";
 import ReactDOM from 'react-dom';
 import cross from "../../static/cross.png";
 import checkmark from "../../static/checkmark.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
@@ -44,12 +44,6 @@ class RegForm extends React.Component {
 
     handleClick(e) {
         if (e.target.id == "reg_btn") {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': '123qwe'
-                }
-            }
             if (this.state.email != "" && this.state.login != "" && this.state.req1 && this.state.req2 && this.state.req3 && this.state.password1 == this.state.password2 && this.state.box && this.state.login_unique && this.state.email_unique) {
                 this.state.reg_status = 1;
                 this.props.confFunc({"name": this.state.name, "last_name": this.state.last_name, "login": this.state.login, "nickname": this.state.nickname, "email": this.state.email, "phone": this.state.phone, "password": this.state.password1})
@@ -200,7 +194,7 @@ class RegForm extends React.Component {
                 break;
             case "input_pass2":
                 this.setState({password2: event.target.value});
-                var status = this.checkPassword(event.target.value);
+                var status = this.checkPassword(this.state.password1);
                 if (this.state.password1 != event.target.value || ((!status.len) || (!status.bigIn) || (!status.numIn))) {
                     event.target.style.backgroundColor = "#fc8e86";
                 } else {
@@ -293,6 +287,7 @@ class RegForm extends React.Component {
 class MailConfirmation extends React.Component {
     constructor(props) {
         super(props);
+        console.log(this.props.navigate);
         this.onBtnClick = this.onBtnClick.bind(this);
         this.onNumInput = this.onNumInput.bind(this);
         this.state = {
@@ -323,7 +318,7 @@ class MailConfirmation extends React.Component {
                 } else {
                     cookies.set("jwt", response.data["token"], { path: "/", sameSite: "strict" });
                     cookies.set("uid", response.data["uid"], { path: "/", sameSite: "strict" });
-                    console.log(this.props);
+                    // console.log(this.props);
                     this.props.navigate("/my_profile", { replace: true });
                 }
                 }).catch(function (error) {
@@ -379,12 +374,11 @@ class MailConfirmation extends React.Component {
     }
 }
 
-class Registration extends React.Component {
-    constructor(props) {
-        super(props);
+class RegistrationClass extends React.Component {
+    constructor() {
+        super();
         this.data1 = React.createRef();
         this.data2 = React.createRef();
-        this.navigate = this.props.navigate;
         this.confirmation = this.confirmation.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.state = {
@@ -440,11 +434,15 @@ class Registration extends React.Component {
                 <Header isMain={false} />
                 <div className="reg_wrap">
                     <RegForm changeFunc={this.onInputChange} confFunc={this.confirmation} style={{display: this.state.reg_display}}/>
-                    <MailConfirmation id="mailconf" style={{height: "400px", display: this.state.conf_display}} navigate={this.navigate} u_name={this.state.name} u_last_name={this.state.last_name} u_login={this.state.login} u_nickname={this.state.nickname} u_email={this.state.email} u_phone={this.state.phone} u_password={this.state.password} u_conf_answer={this.state.conf_answer} />
+                    <MailConfirmation id="mailconf" style={{height: "400px", display: this.state.conf_display}} navigate={this.props.navigate} u_name={this.state.name} u_last_name={this.state.last_name} u_login={this.state.login} u_nickname={this.state.nickname} u_email={this.state.email} u_phone={this.state.phone} u_password={this.state.password} u_conf_answer={this.state.conf_answer} />
                 </div>
                 <Footer style={{background: "#FFFDC7", height: "380px"}}/>
             </div>
         )
     }
 }
-export default Registration;
+
+export default function Registration() {
+    let navigate = useNavigate();
+    return <RegistrationClass navigate={navigate} />
+}

@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`changes the class when hovered 1`] = `
+<header>
+  <div
+    id="header-div"
+  >
+    <a
+      href="/"
+      onClick={[Function]}
+    >
+      <img
+        alt="logo"
+        height="110px"
+        id="logo_img"
+        src="logo.png"
+        width="110px"
+      />
+    </a>
+    <div
+      class="nav-block"
+    >
+      <a
+        className="nav-elem"
+        onClick={[Function]}
+      >
+        Особенности
+      </a>
+      <a
+        className="nav-elem"
+        onClick={[Function]}
+      >
+        Популярные пользователи
+      </a>
+      <a
+        className="nav-elem"
+        onClick={[Function]}
+      >
+        Про нас
+      </a>
+    </div>
+    <div
+      class="reg-signin-block"
+    >
+      <a
+        className="rsbtn"
+        href="/login"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "#000",
+          }
+        }
+      >
+        Login
+      </a>
+      <h>
+        /
+      </h>
+      <a
+        className="rsbtn"
+        href="/registration"
+        onClick={[Function]}
+        style={
+          Object {
+            "color": "#000",
+          }
+        }
+      >
+        Sign up
+      </a>
+    </div>
+  </div>
+</header>
+`;

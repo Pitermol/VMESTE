@@ -30,13 +30,15 @@ import subs from "../../static/subs.png";
 import helps from "../../static/helps.png";
 import Cookies from 'universal-cookie';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router,  useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 const cookies = new Cookies();
 
 
 function MainNotLoggedIn(props) {
   var navigate = useNavigate();
+  console.log(cookies.getAll());
   if ("jwt" in cookies.getAll()) {
   var jwt = cookies.get("jwt");
     var config = {
@@ -48,7 +50,7 @@ function MainNotLoggedIn(props) {
     axios.get( "http://localhost:3010/api/checkjwt", config ).then(function(response) {
       if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
         if (response.data["status"] == 0) {
-        navigate("/feed", { replace: true });
+          navigate("/feed", { replace: true });
         }
       }
     }).catch(function (error) {
@@ -72,7 +74,7 @@ function MainNotLoggedIn(props) {
               <h className='share'>
                 Поделись своим опытом, открой для себя новые направления и свяжись с глобальным сообществом путешественников!
               </h>
-              <button style={{display: "flex", justifyContent: "center", alignItems: "center", paddingBottom: "10px", cursor: "pointer"}}>Зарегистрироваться</button>
+              <Link style={{width: "155.5px", height: "42.24px"}} to="/registration"><button style={{display: "flex", justifyContent: "center", alignItems: "center", paddingBottom: "10px", cursor: "pointer"}}>Зарегистрироваться</button></Link>
             </div>
             <img src={main_page} width="620px" height="680px" />
         </div>

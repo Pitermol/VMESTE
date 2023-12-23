@@ -13,6 +13,7 @@
     align-items: end;
     cursor: pointer;
     user-select: none;
+    z-index: 3;
 }
 .nav_icon_active {
     width: 45px;
@@ -25,6 +26,7 @@
     align-items: end;
     cursor: pointer;
     user-select: none;
+    z-index: 3;
 }
 .nav_icon_active .bar_big:first-child {
     -webkit-transform: translateY(16.5px) rotate(45deg);
@@ -90,9 +92,10 @@
     /* border: 1px solid black; */
 }
 .menu_out {
+    z-index: 2;
     transform: translate(0%)!important;
 }
-.menu_item {
+.changing_menu_item {
     cursor: pointer;
     list-style: none;
     margin: 5px 0 5px 0;
@@ -107,14 +110,14 @@
         background-color: #edea9f;
     }
 }
-.menu_item:first-child {
+.changing_menu_item:first-child {
     margin-top: 120px;
 }
 .users_profile_wrapper1 {
     display: inline-flex;
 }
 .change_profile_main {
-    width: 80%;
+    width: 100%;
     height: auto;
     display: flex;
     flex-direction: row;
@@ -124,14 +127,14 @@
     &:first-child {
         margin-top: 0px;
     }
-    font-size: 25px;
+    font-size: 20px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 
 }
 .change_profile_main_block {
     display: flex;
     flex-direction: column;
-    margin-left: 200px;
+    margin-left: 140px;
     margin-top: 30px;
     &:first-child {
         margin-left: 30px;
@@ -143,6 +146,7 @@
     border-radius: 10px;
     width: 250px;
     height: 34px;
+    margin-top: 7px;
     background-color: #c8ba5f;
     transition: 0.3s;
     &:focus {
@@ -156,8 +160,6 @@
 .save_profile_btn {
     width: 200px;
     height: 35px;
-    margin-left: 40px;
-    margin-top: 20px;
     font-size: 18px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     outline: none;
@@ -172,18 +174,21 @@
 }
 #form-file-upload {
   height: 120px;
-  width: 280px;
+  width: 340px;
   max-width: 100%;
   text-align: center;
   position: relative;
   margin-top: 20px;
+  z-index: 0;
 }
 
 #input-file-upload {
   display: none;
+  z-index: 0;
 }
 
 #label-file-upload {
+  z-index: 0;
   height: 100%;
   display: flex;
   align-items: center;
@@ -207,6 +212,7 @@
 }
 
 #drag-file-element {
+  z-index: 0;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -219,7 +225,8 @@
 #wrong_file_type.closed {
     margin-top: 15px;
     font-size: 16px;
-    transform: translateY(-101%);
+    width: 340px;
+    transform: translateY(-60%);
     transition: all 0.4s ease-in-out;
     visibility: hidden;
     display: flex;
@@ -229,6 +236,7 @@
 }
 #wrong_file_type.opened {
     margin-top: 15px;
+    width: 340px;
     font-size: 16px;
     transform: translateY(0%);
     transition: all 0.4s ease-in-out;
@@ -237,4 +245,36 @@
     align-items: center;
     justify-content: center;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+.pass_require {
+    margin-left: 0px;
+    margin-top: 15px;
+}
+.save_profile_block {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+}
+.saving_closed {
+    visibility: hidden;
+    transition: 0.3s;
+    transform: translateX(-50%);
+}
+.saving_opened {
+    visibility: visible;
+    transition: 0.3s;
+    transform: translateX(0%);
+}
+.saving_err_closed {
+    visibility: hidden;
+    transition: 0.3s;
+    transform: translateX(-230px);
+}
+.saving_err_opened {
+    visibility: visible;
+    transition: 0.3s;
+    transform: translateX(-160px);
+}
+#saving_err_msg {
+    font-size: 18px;
 }

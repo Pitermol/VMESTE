@@ -48,7 +48,9 @@
     margin-left: 40px;
 }
 .my_profile_info_1 {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     margin: 40px 0 0 0;
 }
 .my_profile_info_block {

@@ -4,6 +4,8 @@ import React from "react";
 import mail_sent from "../../static/mail_sent.png"
 import footer_apple from "../../static/footer_apple.png"
 import footer_googleplay from "../../static/footer_googleplay.png"
+import ReactDOM from 'react-dom';
+import axios from 'axios';
 
 class Footer extends React.Component {
     constructor(props) {
@@ -13,8 +15,18 @@ class Footer extends React.Component {
     }
     handleClick(e) {
         const current_email = this.email.current;
-        // alert(current_email.state.text);
+        axios.get( "http://localhost:3010/api/add_email", {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': '123qwe',
+                'email': current_email.state.text
+            }}).catch(function (error) {
+            if (error.response) {
+                alert("Ошибка " + String(error.response.status));
+            }
+        });
         this.email.current.setState({text: ""})
+        ReactDOM.findDOMNode(document.getElementById("subscribed_email")).removeAttribute("hidden")
     }
     render() {
         return (
@@ -29,7 +41,7 @@ class Footer extends React.Component {
                             <button className="footer_news_btn" onClick={this.handleClick}>
                                 Подписаться
                             </button>
-                            <div display="inline-flex" style={{marginLeft: "20px"}}>
+                            <div display="inline-flex" hidden id="subscribed_email" style={{marginLeft: "20px"}}>
                                 <img src={mail_sent} width="20px" style={{marginTop: "27px"}}></img>
                                 <h style={{marginLeft: "8px"}}>
                                     Вы подписаны
