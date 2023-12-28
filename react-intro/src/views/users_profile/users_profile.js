@@ -148,7 +148,6 @@ class UsersProfileClass extends React.Component {
         this.changeAvatar = this.changeAvatar.bind(this);
         this.onNavClick = this.onNavClick.bind(this);
         this.wait = this.wait.bind(this);
-
     }
 
     changeAvatar = (file) => {
@@ -219,7 +218,7 @@ class UsersProfileClass extends React.Component {
         }
     }
 
-    wait = () => {
+    async wait() {
         const timer = setTimeout(() => {}, 2000);
         return () => clearTimeout(timer)
     }
@@ -252,19 +251,25 @@ class UsersProfileClass extends React.Component {
                         <h>
                             Последнее путешествие
                         </h>
-                        {/* <div class="user_maps_block_one">
-                                                    <YMaps>
-                                                        <Map height={330} width={370} defaultState={{ center: [this.stateposts[-1][-1]["location"].x, this.stateposts[-1][-1]["location"].y], zoom: 4 }} >
-                                                            <Placemark
-                                                                geometry={[this.state.posts[-1][-1]["location"].x, this.state.posts[-1][-1]["location"].y]}
-                                                                options={{
-                                                                    zIndex: 100
-                                                                }}
-                                                            />
-                                                        </Map>
-                                                    </YMaps>
-                            </div> */}
-                        <div style={{width: "350px", height: "300px", backgroundColor: "white", marginTop: "30px"}}></div>
+                        <div class="user_maps_block_one" style={{marginTop: "20px"}}>
+                            {(this.state.posts.length != 0) ? 
+                            <YMaps>
+                                <div>
+                                    <Map height={330} width={340} defaultState={{ center: [this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["location"].x, this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["location"].y], zoom: 4 }} >
+                                        <Placemark
+                                            geometry={[this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["location"].x, this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["location"].y]}
+                                            options={{
+                                                zIndex: 100
+                                            }}
+                                        />
+                                    </Map>
+                                    <h className="post_text">{this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["text"]}</h>
+                                </div>
+                            </YMaps>
+                            : <h>Постов еще нет</h>
+                            }
+                        </div>
+                        {/* <div style={{width: "350px", height: "300px", backgroundColor: "white", marginTop: "30px"}}></div> */}
                         {/* <button className="last_post_btn">
                             Подробнее
                         </button> */}
@@ -332,34 +337,27 @@ class UsersProfileClass extends React.Component {
                     </div>
                 </div>
                 <div id="all_posts" className="users_profile_posts">
-                    <h>Все места {(this.state.nickname == "") ? this.state.login : this.state.nickname}:</h>
-                    <table id="users_posts_table">
-                        <tbody>
+                    <h className="all_posts_title">Все места {(this.state.nickname == "") ? this.state.login : this.state.nickname}:</h>
+                    <div id="users_posts_table">
                             {this.state.posts.map((row, i) => (
-                                <tr className="posts_row">
-                                    {row.map((col, j) => {
-                                        this.wait();
-                                        return (
-                                            <td className="posts_col">
-                                                <div class={row.length === 3 ? "user_maps_block_three" : row.length === 2 ? "user_maps_block_two" : "user_maps_block_one"}>
-                                                    <YMaps>
+                                <div className="posts_row">
+                                    <YMaps>
+                                        {row.map((col, j) => {
+                                            return (
+                                                <div className={row.length === 3 ? "user_maps_block_three" : row.length === 2 ? "user_maps_block_two" : "user_maps_block_one"}>
+                                                    <div style={{display: "flex", flexDirection: "column", textAlign: "center"}}>
                                                         <Map height={330} width={370} defaultState={{ center: [col["location"].x, col["location"].y], zoom: 4 }} >
-                                                            <Placemark
-                                                                geometry={[col["location"].x, col["location"].y]}
-                                                                options={{
-                                                                    zIndex: 100
-                                                                }}
-                                                            />
+                                                            <Placemark geometry={[col["location"].x, col["location"].y]} options={{ zIndex: 100 }} />
                                                         </Map>
-                                                    </YMaps>
+                                                        <h className="post_text">{col["text"]}</h>
+                                                    </div>
                                                 </div>
-                                            </td>
+                                            )}
                                         )}
-                                    )}
-                                </tr>
+                                    </YMaps>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
+                    </div>
                 </div>
                 <Footer style={{backgroundColor: "#FFFDC7", marginTop: "30px"}} />
             </div>
@@ -372,4 +370,4 @@ export default function UsersProfile() {
     const params = useParams();
   
     return <UsersProfileClass navigate={navigate} uid={params.userId}/>;
-  }
+}

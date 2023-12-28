@@ -23,7 +23,10 @@ export function update_profile(req, res) {
       if (password == "" && nickname == "" && first_name == "" && last_name == "") {
         return res.json({ status: 0 })
       }
-      var query = `UPDATE Users SET password = ${password == "" ? "password" : "'" + password + "'"}, nickname = ${nickname == "" ? "nickname" : "'" + nickname + "'"}, first_name = ${first_name == "" ? "first_name" : "'" + first_name + "'"}, last_name = ${last_name == "" ? "last_name" : "'" + last_name + "'"} WHERE uid = ${uid}`;
+      var query = `UPDATE Users SET password = ${password == "" ? "password" : "'" + password + "'"},
+      nickname = ${nickname == "" ? "nickname" : "'" + nickname + "'"},
+      first_name = ${first_name == "" ? "first_name" : "'" + first_name + "'"}, 
+      last_name = ${last_name == "" ? "last_name" : "'" + last_name + "'"} WHERE uid = ${uid}`;
       await client.query(query);
       await client.end();
       return res.json({ status: 0 })

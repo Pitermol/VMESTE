@@ -28,10 +28,10 @@ export function create_post(req, res) {
         post_id = res1[0]["post_id"] + 1;
         }
         if (coords != []) {
-        var query = `INSERT INTO Posts("post_id", "post_owner", "text", "location", "likes") VALUES (${post_id}, ${uid}, '${text}', point(${coords[0]}, ${coords[1]}), 0)`;
+        var query = `INSERT INTO Posts("post_id", "post_owner", "text", "location", "likes") VALUES (${post_id}, ${uid}, '${text}', point(${coords[0]}, ${coords[1]}), '{}')`;
         await client.query(query);
         } else {
-        var query = `INSERT INTO Posts("post_id", "post_owner", "text", "likes") VALUES (${post_id}, ${uid}, '${text}', 0)`;
+        var query = `INSERT INTO Posts("post_id", "post_owner", "text", "likes") VALUES (${post_id}, ${uid}, '${text}', '{}')`;
         await client.query(query);
         }
         var query = `UPDATE Scores SET score = score + 3 WHERE uid = ${uid}`;

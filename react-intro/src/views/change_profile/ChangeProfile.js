@@ -110,30 +110,30 @@ class ChangeProfileClass extends React.Component {
         }
         var config;
 
-        if ("jwt" in cookies.getAll()) {
-            var jwt = cookies.get("jwt");
-            config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': `Bearer ${jwt}`
+        if (!("jwt" in cookies.getAll())) {
+            cookies.set({ "jwt": "" });
+        }
+        var jwt = cookies.get("jwt");
+        config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${jwt}`
+            }
+        }
+        axios.get( "http://localhost:3010/api/checkjwt", config ).then(function(response) {
+        if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
+                if (response.data["status"] == 1) {
+                    console.log("redirect")
+                    navigate("/login", { replace: true });
+                } else {
+                    this.setState({uid: response.data.data});
                 }
             }
-            axios.get( "http://localhost:3010/api/checkjwt", config ).then(function(response) {
-                if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
-                    if (response.data["status"] == 1) {
-                        navigate("/login", { replace: true });
-                    } else {
-                        this.setState({uid: response.data.data});
-                    }
-                }
-            }).catch(function (error) {
-                if (error.response) {
-                    alert("Ошибка " + String(error.response.status));
-                }
-            });
-        } else {
-            navigate("/login", { replace: true });
-        }
+        }).catch(function (error) {
+            if (error.response) {
+                alert("Ошибка " + String(error.response.status));
+            }
+        });
 
         config = {
             headers: {
@@ -145,7 +145,7 @@ class ChangeProfileClass extends React.Component {
         axios.get("http://localhost:3010/api/get_public_info", config).then(response => {
             if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
                 if (response.data["status"] == 1) {
-                    alert("Ошибка на стороне сервера");
+                    console.log("Ошибка на стороне сервера");
                 } else {
                     this.setState({ login: response.data.login, nickname: response.data.nickname, first_name: response.data.first_name, last_name: response.data.last_name, subs_amount: response.data.subs, posts_amount: response.data.posts, top_place: response.data.place });
                 }
@@ -239,19 +239,6 @@ class ChangeProfileClass extends React.Component {
     }
 
     save = (e) => {
-        var formData = new FormData();
-        formData.append("avatar", this.state.avatar_file);
-        axios.post('http://localhost:3010/api/loadimg', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'authorization': '123qwe',
-                'uid': cookies.get("uid")
-            }
-        }).catch(function (error) {
-            if (error.response) {
-                alert("Ошибка " + String(error.response.status));
-            }
-        });
         var data = { uid: cookies.get("uid"), pass: this.state.cur_password };
         var config = {
             headers: {
@@ -268,6 +255,19 @@ class ChangeProfileClass extends React.Component {
                 }, 2000);
                 return () => clearTimeout(timer);
             } else {
+                var formData = new FormData();
+                formData.append("avatar", this.state.avatar_file);
+                axios.post('http://localhost:3010/api/loadimg', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'authorization': '123qwe',
+                        'uid': cookies.get("uid")
+                    }
+                }).catch(function (error) {
+                    if (error.response) {
+                        alert("Ошибка " + String(error.response.status));
+                    }
+                });
                 if ((this.state.req1 && this.state.req2 && this.state.req3 && this.state.new_password1 == this.state.new_password2) || (this.state.new_password1 == "" && this.state.new_password2 == "")) {
                     data = { uid: cookies.get("uid"), pass: this.state.new_password1, nickname: this.state.nickname, first_name: this.state.first_name, last_name: this.state.last_name };
                     axios.post( "http://localhost:3010/api/update_profile", data, config).then(response => {
@@ -419,4 +419,4 @@ export default function ChangeProfile() {
     const effect = useEffect;
   
     return <ChangeProfileClass navigate={navigate} effect={effect}/>;
-  }
+}

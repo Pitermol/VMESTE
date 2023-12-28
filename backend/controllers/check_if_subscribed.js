@@ -17,6 +17,9 @@ export function check_if_subscribed(req, res) {
         const client = await getClient();
         const target = req.body.target;
         const subscriber = req.body.subscriber;
+        if (target == undefined | subscriber == undefined) {
+            return res.json({ status: 1 })
+        }
         var query = `SELECT * FROM Subscribers WHERE target = ${target} AND subscriber = ${subscriber}`;
         var res1 = await client.query(query);
         await client.end();

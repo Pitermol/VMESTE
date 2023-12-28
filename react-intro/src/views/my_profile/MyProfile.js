@@ -33,36 +33,36 @@ class UsersProfileClass extends React.Component {
             top_place: 0,
             avatar_src: undefined,
             avatar_width: 0,
-            avatar_height: 0
+            avatar_height: 0,
+            posts: []
         }
         var config;
 
-        if ("jwt" in cookies.getAll()) {
-            var jwt = cookies.get("jwt");
-            console.log(jwt);
-            config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'authorization': `Bearer ${jwt}`
+        if (!("jwt" in cookies.getAll())) {
+            cookies.set("jwt", "");
+        }
+        var jwt = cookies.get("jwt");
+        console.log(jwt);
+        config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${jwt}`
+            }
+        }
+        axios.get( "http://localhost:3010/api/checkjwt", config ).then(response => {
+            console.log(response);
+            if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
+                if (response.data["status"] == 1) {
+                    navigate("/login", { replace: true });
+                } else {
+                    this.setState({uid: response.data.data});
                 }
             }
-            axios.get( "http://localhost:3010/api/checkjwt", config ).then(response => {
-                console.log(response);
-                if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
-                    if (response.data["status"] == 1) {
-                        navigate("/login", { replace: true });
-                    } else {
-                        this.setState({uid: response.data.data});
-                    }
-                }
-            }).catch(function (error) {
-                if (error.response) {
-                    alert("Ошибка " + String(error.response.status));
-                }
-            });
-        } else {
-            navigate("/login", { replace: true });
-        }
+        }).catch(function (error) {
+            if (error.response) {
+                alert("Ошибка " + String(error.response.status));
+            }
+        });
 
         config = {
             headers: {
@@ -74,7 +74,7 @@ class UsersProfileClass extends React.Component {
         axios.get("http://localhost:3010/api/get_public_info", config).then(response => {
             if ((Object.keys(response).length != 0) && (Object.keys(response.data).length != 0)) {
                 if (response.data["status"] == 1) {
-                    alert("Ошибка на стороне сервера");
+                    console.log("Ошибка на стороне сервера");
                 } else {
                     this.setState({ login: response.data.login, nickname: response.data.nickname, subs_amount: response.data.subs, posts_amount: response.data.posts, top_place: response.data.place });
                 }
@@ -99,6 +99,30 @@ class UsersProfileClass extends React.Component {
                 console.error('Ошибка загрузки файла:', error);
             });
         }
+
+        axios.get("http://localhost:3010/api/get_users_posts", {headers: {authorization: "123qwe", uid: cookies.get("uid")}}).then(response => {
+
+            var posts = [];
+            var row = [];
+            for (var i = 0; i < response.data["data"].length; i++) {
+                if ((i + 1) % 3 != 0) {
+                    row.push(response.data["data"][i])
+                } else {
+                    row.push(response.data["data"][i])
+                    posts.push(row);
+                    row = [];
+                }
+            };
+            if (row.length != 0) {
+                posts.push(row);
+            }
+            console.log(posts);
+            this.setState({ posts: posts });
+        }).catch(function (error) {
+            if (error.response) {
+                alert("Ошибка " + String(error.response.status));
+            }
+        });
         
         this.logout = this.logout.bind(this);
         this.create_post = this.create_post.bind(this);
@@ -156,11 +180,34 @@ class UsersProfileClass extends React.Component {
                 ReactDOM.findDOMNode(document.getElementById("post_text_input")).value = "";
                 this.hide_creating();
             }
-            }).catch(function (error) {
-                if (error.response) {
-                    alert("Ошибка " + String(error.response.status));
+        }).catch(function (error) {
+            if (error.response) {
+                alert("Ошибка " + String(error.response.status));
+            }
+        });
+
+        axios.get("http://localhost:3010/api/get_users_posts", {headers: {authorization: "123qwe", uid: cookies.get("uid")}}).then(response => {
+            var posts = [];
+            var row = [];
+            for (var i = 0; i < response.data["data"].length; i++) {
+                if ((i + 1) % 3 != 0) {
+                    row.push(response.data["data"][i])
+                } else {
+                    row.push(response.data["data"][i])
+                    posts.push(row);
+                    row = [];
                 }
-            });
+            };
+            if (row.length != 0) {
+                posts.push(row);
+            }
+            console.log(posts);
+            this.setState({ posts: posts });
+        }).catch(function (error) {
+            if (error.response) {
+                alert("Ошибка " + String(error.response.status));
+            }
+        });
     }
 
     render() {
@@ -211,7 +258,24 @@ class UsersProfileClass extends React.Component {
                         <h>
                             Последнее путешествие
                         </h>
-                        <div style={{width: "350px", height: "300px", backgroundColor: "black", marginTop: "30px"}}></div>
+                        <div class="user_maps_block_one" style={{marginTop: "20px"}}>
+                            {(this.state.posts.length != 0) ? 
+                            <YMaps>
+                                <div>
+                                    <Map height={300} width={350} defaultState={{ center: [this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["location"].x, this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["location"].y], zoom: 4 }} >
+                                        <Placemark
+                                            geometry={[this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["location"].x, this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["location"].y]}
+                                            options={{
+                                                zIndex: 100
+                                            }}
+                                        />
+                                    </Map>
+                                    <h className="post_text" style={{marginTop: "10px"}}>{this.state.posts[this.state.posts.length - 1][this.state.posts[this.state.posts.length - 1].length - 1]["text"]}</h>
+                                </div>
+                            </YMaps>
+                            : <h>Постов еще нет</h>
+                            }
+                        </div>
                         {/* <button className="last_post_btn">
                             Подробнее
                         </button> */}
@@ -252,9 +316,26 @@ class UsersProfileClass extends React.Component {
                 </div>
                 <div className="my_profile_posts">
                         <h>Мои места:</h>
-                        <table className="my_posts_table">
-                            
-                        </table>
+                        <div id="users_posts_table">
+                            {this.state.posts.map((row, i) => (
+                                <div className="posts_row">
+                                    <YMaps>
+                                        {row.map((col, j) => {
+                                            return (
+                                                <div className={row.length === 3 ? "user_maps_block_three" : row.length === 2 ? "user_maps_block_two" : "user_maps_block_one"}>
+                                                    <div style={{display: "flex", flexDirection: "column", textAlign: "center"}}>
+                                                        <Map height={330} width={370} defaultState={{ center: [col["location"].x, col["location"].y], zoom: 4 }} >
+                                                            <Placemark geometry={[col["location"].x, col["location"].y]} options={{ zIndex: 100 }} />
+                                                        </Map>
+                                                        <h className="post_text">{col["text"]}</h>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        )}
+                                    </YMaps>
+                                </div>
+                            ))}
+                    </div>
                 </div>
                 <Footer style={{backgroundColor: "#FFFDC7", marginTop: "30px"}} />
             </div>

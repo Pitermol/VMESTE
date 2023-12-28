@@ -1,1 +1,1 @@
-// export const silent = true;
+export const silent = true;

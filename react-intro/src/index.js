@@ -10,6 +10,7 @@ import MyProfile from './views/my_profile/MyProfile.js';
 import Error404 from './views/error404/error404.js';
 import ChangeProfile from './views/change_profile/ChangeProfile.js';
 import reportWebVitals from './reportWebVitals';
+import Feed from './views/feed/Feed.js';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -27,6 +28,8 @@ root.render(
         <Route path="/my_profile" element={<MyProfile navigate={ useNavigate } />}>
         </Route>
         <Route path="/change_profile" element={<ChangeProfile navigate={ useNavigate } />}>
+        </Route>
+        <Route path="/feed" element={<Feed navigate={ useNavigate } />}>
         </Route>
         <Route path="*" element={<Error404 navigate={ useNavigate } />}>
         </Route>

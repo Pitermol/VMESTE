@@ -1,0 +1,59 @@
+.all_posts_list {
+    min-height: 1500px;
+    display: flex;
+    flex-direction: column;
+
+}
+.feed_post_item_wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 30px;
+}
+.all_post_item_container {
+    background-color: #FFFEDDB2;
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 480px;
+}
+.feed_post_text {
+    margin-left: 50px;
+    margin-bottom: 270px;
+    font-size: 25px;
+    width: 200px;
+}
+.likes_unliked {
+    width: 230px;
+    height: 55px;
+    border-radius: 40px;
+    border: 1px solid black;
+    background-color: #E0E786;
+    margin-top: 380px;
+    margin-right: 30px;
+    display: flex;
+    flex-direction: row;
+    color: #00000099;
+    font-size: 30px;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+.likes_liked {
+    width: 230px;
+    height: 55px;
+    border-radius: 40px;
+    border: 1px solid black;
+    background-color: #E99371;
+    margin-top: 380px;
+    margin-right: 30px;
+    display: flex;
+    flex-direction: row;
+    color: #00000099;
+    font-size: 30px;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}

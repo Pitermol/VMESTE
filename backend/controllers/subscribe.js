@@ -20,7 +20,7 @@ export function subscribe(req, res) {
         console.log(target, subscriber);
         var query = `INSERT INTO Subscribers(target, subscriber) VALUES (${target}, ${subscriber})`;
         await client.query(query);
-        var query = `UPDATE Scores SET score = score + 1 WHERE uid = ${target}`;
+        var query = `UPDATE Scores SET score = score + 2 WHERE uid = ${target}`;
         await client.query(query);
         
         await client.end();

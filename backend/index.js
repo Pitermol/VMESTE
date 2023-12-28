@@ -25,6 +25,8 @@ import { subscribe } from './controllers/subscribe.js';
 import { unsubscribe } from './controllers/unsubscribe.js';
 import { check_if_subscribed } from './controllers/check_if_subscribed.js';
 import { check_existance } from './controllers/check_existance.js';
+import { get_last_posts } from './controllers/get_last_posts.js';
+import { like_post } from './controllers/like_post.js';
 
 
 const app = express();
@@ -44,11 +46,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/api/confirm_email', jsonParser, confirm_email)
+app.post('/api/confirm_email', jsonParser, confirm_email);
 
-app.post("/api/update_profile", jsonParser, update_profile)
+app.post("/api/like_post", jsonParser, like_post);
 
-app.get("/api/get_public_info", get_public_info)
+app.post("/api/update_profile", jsonParser, update_profile);
+
+app.get("/api/get_public_info", get_public_info);
 
 app.get('/api/get_avatar', get_avatar);
 
@@ -57,6 +61,8 @@ app.post('/api/loadimg', loadimg);
 app.get('/api/add_email', add_email);
 
 app.get('/api/get_users_posts', get_users_posts);
+
+app.get('/api/get_last_posts', get_last_posts);
 
 app.get("/api/checkjwt", checkjwt);
 

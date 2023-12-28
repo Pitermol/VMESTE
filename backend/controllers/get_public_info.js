@@ -14,6 +14,9 @@ import fileUpload from 'express-fileupload';
 export async function get_public_info(req, res) {
     if (req.headers.authorization != process.env.TOKEN) return res.sendStatus(401);
     const uid = req.headers["uid"];
+    if (uid == undefined) {
+        return res.json({ status: 1 })
+    };
     (async() => {
         const client = await getClient();
         var res1;
@@ -34,7 +37,15 @@ export async function get_public_info(req, res) {
         if (res1.length == 0) {
         return res.json({ status: 1 })
         } else {
-        return res.json({ status: 0, nickname: (res1[0]["nickname"] == null ? "" : res1[0]["nickname"]), login: res1[0]["login"], first_name: (res1[0]["first_name"] == null ? "" : res1[0]["first_name"]), last_name: (res1[0]["last_name"] == null ? "" : res1[0]["last_name"]), subs: subs, posts: posts, place: top_place })
+        return res.json({
+            status: 0,
+            nickname: (res1[0]["nickname"] == null ? "" : res1[0]["nickname"]),
+            login: res1[0]["login"],
+            first_name: (res1[0]["first_name"] == null ? "" : res1[0]["first_name"]), 
+            last_name: (res1[0]["last_name"] == null ? "" : res1[0]["last_name"]), 
+            subs: subs, 
+            posts: posts, 
+            place: top_place })
         }
     })();
 }
